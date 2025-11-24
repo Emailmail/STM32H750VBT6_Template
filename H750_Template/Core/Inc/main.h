@@ -64,8 +64,6 @@ void Error_Handler(void);
 #define KEY1_Pin GPIO_PIN_0
 #define KEY1_GPIO_Port GPIOA
 #define KEY1_EXTI_IRQn EXTI0_IRQn
-#define BEEP_Pin GPIO_PIN_4
-#define BEEP_GPIO_Port GPIOA
 #define KEY0_Pin GPIO_PIN_15
 #define KEY0_GPIO_Port GPIOA
 #define KEY0_EXTI_IRQn EXTI15_10_IRQn

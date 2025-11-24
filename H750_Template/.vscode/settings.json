@@ -9,6 +9,7 @@
         "stm32h750xx.h": "c",
         "led_rgb.h": "c",
         "stm32h7xx_hal.h": "c",
-        "key.h": "c"
+        "key.h": "c",
+        "bsp_uart.h": "c"
     }
 }

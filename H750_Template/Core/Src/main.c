@@ -18,13 +18,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led.h"
-#include "led_rgb.h"
 #include "key.h"
+#include "bsp_uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,8 +47,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-bool beep_state = 0;
 LED_Instance *led0;
+LED_Instance *led1;
+UART_Instance *uart1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,6 +96,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   /*---------------- 自定义代码开始 ----------------*/
   /* 配置LED参数并注册LED实例 */
@@ -103,6 +108,22 @@ int main(void)
     .attr = 1 // LED0为高电平时点亮
   };
   led0 = LED_Register(&led0_init);
+  LED_InitTypedef led1_init = 
+  {
+    .port = GPIOE,
+    .pin = GPIO_PIN_6,  // LED1在PE6上
+    .attr = 1 // LED1为高电平时点亮
+  };
+  led1 = LED_Register(&led1_init);
+
+  /* 配置串口参数并注册串口实例 */
+  UART_Init_Config_s uart1_init = 
+  {
+    .recv_buff_size = 128, // 串口接收缓冲区大小
+    .usart_handle = &huart1,  // 串口1
+    .module_callback = NULL // 不实现回调函数
+  };
+  uart1 = UART_Register(&uart1_init);
 
   /* USER CODE END 2 */
 
@@ -110,11 +131,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    if(beep_state)
-    {
-      HAL_GPIO_TogglePin(BEEP_GPIO_Port, BEEP_Pin);
-      HAL_Delay(1);
-    }
+    UART_Send(uart1, (uint8_t*)"Hello World!\r\n", strlen("Hello World!\r\n"), UART_TRANSFER_BLOCKING);
+    HAL_Delay(1000);
     /*---------------- 自定义代码结束 ----------------*/
     /* USER CODE END WHILE */
 
@@ -182,18 +200,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  HAL_Delay(10);  // 10ms消抖
-  if(GPIO_Pin == KEY0_Pin)  // KEY0被按下
-  {
-    beep_state = !beep_state; // 蜂鸣器状态翻转
-  }
-  else if(GPIO_Pin == KEY1_Pin) // KEY1被按下
-  {
-    LED_Control(led0, !led0->state);  // LED状态翻转
-  }
-}
+
 /* USER CODE END 4 */
 
  /* MPU Configuration */
