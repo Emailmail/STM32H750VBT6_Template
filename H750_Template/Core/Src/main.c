@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -27,6 +28,7 @@
 #include "led.h"
 #include "key.h"
 #include "bsp_uart.h"
+#include "oled.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,13 +52,14 @@
 LED_Instance *led0;
 LED_Instance *led1;
 UART_Instance *uart1;
+OLED_Instance *oled;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
-
+void UART1_UserCallback(void *device_instance, uint16_t size);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -98,8 +101,10 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART1_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  /*---------------- 自定义代码开始 ----------------*/
+  /* -------------------------------- 自定义代码开始 -------------------------------- */
+  /* ---------------- 注册设备 ---------------- */
   /* 配置LED参数并注册LED实例 */
   LED_InitTypedef led0_init = 
   {
@@ -119,21 +124,38 @@ int main(void)
   /* 配置串口参数并注册串口实例 */
   UART_Init_Config_s uart1_init = 
   {
-    .recv_buff_size = 128, // 串口接收缓冲区大小
-    .usart_handle = &huart1,  // 串口1
-    .module_callback = NULL // 不实现回调函数
+    .recv_buff_size = 128,                // 串口接收缓冲区大小
+    .usart_handle = &huart1,              // 串口1
+    .module_callback = UART1_UserCallback // 不实现回调函数
   };
   uart1 = UART_Register(&uart1_init);
+  uart1->device_instance = (void *)uart1;
 
+  /* 配置OLED屏幕并注册实例 */
+  OLED_InitTypedef oled_init = 
+  {
+    .hi2c = &hi2c1, // I2C1
+  };
+  oled = OLED_Register(&oled_init);
+
+  /* ---------------- 初始化设备 ---------------- */
+  HAL_Delay(20);
+  OLED_Init(oled);
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    UART_Send(uart1, (uint8_t*)"Hello World!\r\n", strlen("Hello World!\r\n"), UART_TRANSFER_BLOCKING);
-    HAL_Delay(1000);
-    /*---------------- 自定义代码结束 ----------------*/
+    OLED_NewFrame(oled);
+    OLED_PrintString(oled, 1, 1, "Hello World!", &font16x16, OLED_COLOR_NORMAL);
+    OLED_ShowFrame(oled);
+
+    UART_Send(uart1, (uint8_t*)"UART Connecting.\r\n", strlen("UART Connecting.\r\n"), UART_TRANSFER_BLOCKING);
+
+    // HAL_Delay(1000);
+    /*-------------------------------- 自定义代码结束 --------------------------------*/
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -200,7 +222,32 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void UART1_UserCallback(void *device_instance, uint16_t size)
+{
+  UART_Instance *instance = (UART_Instance *)device_instance;
+  switch (instance->recv_buff[0])
+  {
+  case 'R':
+    
+    break;
 
+  case 'G':
+    
+    break;
+    
+  case 'B':
+    
+    break;
+
+  case 'O':
+
+    break;
+  
+  default:
+
+    break;
+  }
+}
 /* USER CODE END 4 */
 
  /* MPU Configuration */

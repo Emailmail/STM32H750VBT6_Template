@@ -1,4 +1,4 @@
-template/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
+template/oled.o: ..\Devices\Src\oled.c ..\Devices\Inc\oled.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -25,6 +25,4 @@ template/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\Core\Inc\dma.h ..\Core\Inc\i2c.h ..\Core\Inc\usart.h \
-  ..\Core\Inc\gpio.h ..\Devices\Inc\led.h ..\Devices\Inc\key.h \
-  ..\BSP\Inc\bsp_uart.h ..\Devices\Inc\oled.h ..\Devices\Inc\font.h
+  ..\Devices\Inc\font.h ..\Core\Inc\i2c.h ..\Core\Inc\main.h
