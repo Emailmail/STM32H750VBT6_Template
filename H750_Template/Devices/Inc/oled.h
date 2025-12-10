@@ -29,6 +29,7 @@ typedef struct
 typedef struct
 {
   I2C_HandleTypeDef *hi2c;
+  uint8_t GRAM[OLED_PAGE][OLED_COLUMN];
 } OLED_Instance;
 
 OLED_Instance *OLED_Register(OLED_InitTypedef *init);

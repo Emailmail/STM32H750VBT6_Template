@@ -8,8 +8,6 @@
  */
 #include "oled.h"
 
-uint8_t OLED_GRAM[OLED_PAGE][OLED_COLUMN];
-
 /**
  * @brief 注册OLED实例
  */
@@ -23,6 +21,7 @@ OLED_Instance *OLED_Register(OLED_InitTypedef *init)
   OLED_Instance *instance = malloc(sizeof(OLED_Instance));
   if (instance == NULL)
     return NULL;
+  memset(instance->GRAM, 0, sizeof(instance->GRAM));
 
   /* 参数传递 */
   instance->hi2c = init->hi2c;
@@ -153,7 +152,7 @@ void OLED_SetColorMode(OLED_Instance *instance, OLED_ColorMode mode)
  */
 void OLED_NewFrame(OLED_Instance *instance)
 {
-  memset(OLED_GRAM, 0, sizeof(OLED_GRAM));
+  memset(instance->GRAM, 0, sizeof(instance->GRAM));
 }
 
 /**
@@ -169,7 +168,7 @@ void OLED_ShowFrame(OLED_Instance *instance)
     OLED_SendCmd(instance, 0xB0 + i); // 设置页地址
     OLED_SendCmd(instance, 0x02);     // 设置列地址低4位
     OLED_SendCmd(instance, 0x10);     // 设置列地址高4位
-    memcpy(sendBuffer + 1, OLED_GRAM[i], OLED_COLUMN);
+    memcpy(sendBuffer + 1, instance->GRAM[i], OLED_COLUMN);
     OLED_Send(instance, sendBuffer, OLED_COLUMN + 1);
   }
 }
@@ -186,11 +185,11 @@ void OLED_SetPixel(OLED_Instance *instance, uint8_t x, uint8_t y, OLED_ColorMode
     return;
   if (!color)
   {
-    OLED_GRAM[y / 8][x] |= 1 << (y % 8);
+    instance->GRAM[y / 8][x] |= 1 << (y % 8);
   }
   else
   {
-    OLED_GRAM[y / 8][x] &= ~(1 << (y % 8));
+    instance->GRAM[y / 8][x] &= ~(1 << (y % 8));
   }
 }
 
@@ -215,9 +214,9 @@ void OLED_SetByte_Fine(OLED_Instance *instance, uint8_t page, uint8_t column, ui
     data = ~data;
 
   temp = data | (0xff << (end + 1)) | (0xff >> (8 - start));
-  OLED_GRAM[page][column] &= temp;
+  instance->GRAM[page][column] &= temp;
   temp = data & ~(0xff << (end + 1)) & ~(0xff >> (8 - start));
-  OLED_GRAM[page][column] |= temp;
+  instance->GRAM[page][column] |= temp;
 }
 
 /**
@@ -234,7 +233,7 @@ void OLED_SetByte(OLED_Instance *instance, uint8_t page, uint8_t column, uint8_t
     return;
   if (color)
     data = ~data;
-  OLED_GRAM[page][column] = data;
+  instance->GRAM[page][column] = data;
 }
 
 /**
@@ -261,10 +260,6 @@ void OLED_SetBits_Fine(OLED_Instance *instance, uint8_t x, uint8_t y, uint8_t da
   {
     OLED_SetByte_Fine(instance, page, x, data << bit, bit, bit + len - 1, color);
   }
-  // 使用OLED_SetPixel实现
-  // for (uint8_t i = 0; i < len; i++) {
-  //   OLED_SetPixel(x, y + i, !((data >> i) & 0x01));
-  // }
 }
 
 /**
