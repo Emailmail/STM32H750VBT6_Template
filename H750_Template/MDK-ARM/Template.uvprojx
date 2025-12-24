@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_PWR_LDO_SUPPLY,USE_HAL_DRIVER,STM32H750xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../Devices/Src;../Devices/Inc;../BSP/Src;../BSP/Inc</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../Devices/Src;../Devices/Inc;../BSP/Src;../BSP/Inc;../Devices/Device_Drivers/Src;../Devices/Device_Drivers/Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -881,14 +881,29 @@
               <FilePath>..\Devices\Src\led_rgb.c</FilePath>
             </File>
             <File>
-              <FileName>font.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Devices\Src\font.c</FilePath>
-            </File>
-            <File>
               <FileName>oled.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Devices\Src\oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>lsm6dsv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Devices\Src\lsm6dsv.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Device_Drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Devices\Device_Drivers\Src\font.c</FilePath>
+            </File>
+            <File>
+              <FileName>lsm6dsv16x_reg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Devices\Device_Drivers\Src\lsm6dsv16x_reg.c</FilePath>
             </File>
           </Files>
         </Group>

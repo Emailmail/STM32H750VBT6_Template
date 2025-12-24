@@ -1,12 +1,12 @@
-template/oled.o: ..\Devices\Src\oled.c ..\Devices\Inc\oled.h \
+template/lsm6dsv.o: ..\Devices\Src\lsm6dsv.c ..\Devices\Inc\lsm6dsv.h \
+  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h750xx.h \
+  ..\Drivers\CMSIS\Include\core_cm7.h \
+  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
   ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h7xx.h \
-  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h750xx.h \
-  ..\Drivers\CMSIS\Include\core_cm7.h \
-  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h \
@@ -25,5 +25,4 @@ template/oled.o: ..\Devices\Src\oled.c ..\Devices\Inc\oled.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\Devices\Device_Drivers\Inc\font.h ..\Core\Inc\i2c.h \
-  ..\Core\Inc\main.h
+  ..\Devices\Device_Drivers\Inc\lsm6dsv16x_reg.h

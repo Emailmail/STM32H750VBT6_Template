@@ -126,7 +126,7 @@ int main(void)
   {
     .recv_buff_size = 128,                // 串口接收缓冲区大小
     .usart_handle = &huart1,              // 串口1
-    .module_callback = UART1_UserCallback // 不实现回调函数
+    .module_callback = UART1_UserCallback // 回调函数
   };
   uart1 = UART_Register(&uart1_init);
   uart1->device_instance = (void *)uart1;
@@ -228,11 +228,11 @@ void UART1_UserCallback(void *device_instance, uint16_t size)
   switch (instance->recv_buff[0])
   {
   case 'R':
-    
+    LED_On(led0);
     break;
 
   case 'G':
-    
+    LED_On(led1);
     break;
     
   case 'B':
@@ -240,7 +240,8 @@ void UART1_UserCallback(void *device_instance, uint16_t size)
     break;
 
   case 'O':
-
+    LED_Off(led0);
+    LED_Off(led1);
     break;
   
   default:

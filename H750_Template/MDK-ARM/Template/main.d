@@ -27,4 +27,5 @@ template/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
   ..\Core\Inc\dma.h ..\Core\Inc\i2c.h ..\Core\Inc\usart.h \
   ..\Core\Inc\gpio.h ..\Devices\Inc\led.h ..\Devices\Inc\key.h \
-  ..\BSP\Inc\bsp_uart.h ..\Devices\Inc\oled.h ..\Devices\Inc\font.h
+  ..\BSP\Inc\bsp_uart.h ..\Devices\Inc\oled.h \
+  ..\Devices\Device_Drivers\Inc\font.h

@@ -32,8 +32,10 @@
 "template\key.o"
 "template\led.o"
 "template\led_rgb.o"
-"template\font.o"
 "template\oled.o"
+"template\lsm6dsv.o"
+"template\font.o"
+"template\lsm6dsv16x_reg.o"
 --strict --scatter "Template\Template.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
