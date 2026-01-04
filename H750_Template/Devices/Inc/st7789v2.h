@@ -13,9 +13,9 @@
 #define USE_HORIZONTAL (0) // 0或1为竖屏 2或3为横屏
 #if USE_HORIZONTAL == 0 || USE_HORIZONTAL == 1
 #define LCD_W 240
-#define LCD_H 240
+#define LCD_H 280
 #else
-#define LCD_W 240
+#define LCD_W 280
 #define LCD_H 240
 #endif
 
@@ -70,6 +70,7 @@ typedef struct
 
 uint32_t mypow(uint8_t m, uint8_t n);                                                                                                                   // 求幂
 void ST7789V2_Address_Set(ST7789V2_Instance *instance, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);                                             // 设置坐标函数
+ST7789V2_Instance *ST7789V2_Register(ST7789V2_InitTypedef *init);                                                                                                  // 注册实例
 void ST7789V2_Init(ST7789V2_Instance *instance);                                                                                                        // LCD初始化
 void ST7789V2_Fill(ST7789V2_Instance *instance, uint16_t xsta, uint16_t ysta, uint16_t xend, uint16_t yend, uint16_t color);                            // 指定区域填充颜色
 void ST7789V2_DrawPoint(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint16_t color);                                                           // 在指定位置画一个点
@@ -83,8 +84,8 @@ void ST7789V2_ShowChinese24x24(ST7789V2_Instance *instance, uint16_t x, uint16_t
 void ST7789V2_ShowChinese32x32(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint8_t *s, uint16_t fc, uint16_t bc, uint8_t sizey, uint8_t mode); // 显示单个32x32汉字
 void ST7789V2_ShowChar(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint8_t num, uint16_t fc, uint16_t bc, uint8_t sizey, uint8_t mode);        // 显示一个字符
 void ST7789V2_ShowString(ST7789V2_Instance *instance, uint16_t x, uint16_t y, const uint8_t *p, uint16_t fc, uint16_t bc, uint8_t sizey, uint8_t mode); // 显示字符串
-void LCD_ShowIntNum(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint16_t num, uint8_t len, uint16_t fc, uint16_t bc, uint8_t sizey);           // 显示整数变量
-void LCD_ShowFloatNum1(ST7789V2_Instance *instance, uint16_t x, uint16_t y, float num, uint8_t len, uint16_t fc, uint16_t bc, uint8_t sizey);           // 显示两位小数变量
-void LCD_ShowPicture(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint16_t length, uint16_t width, const uint8_t pic[]);                        // 显示图片
+void ST7789V2_ShowIntNum(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint16_t num, uint8_t len, uint16_t fc, uint16_t bc, uint8_t sizey);      // 显示整数变量
+void ST7789V2_ShowFloatNum1(ST7789V2_Instance *instance, uint16_t x, uint16_t y, float num, uint8_t len, uint16_t fc, uint16_t bc, uint8_t sizey);      // 显示两位小数变量
+void ST7789V2_ShowPicture(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint16_t length, uint16_t width, const uint8_t pic[]);                   // 显示图片
 
 #endif
