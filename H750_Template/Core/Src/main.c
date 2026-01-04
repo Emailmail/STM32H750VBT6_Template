@@ -18,8 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "dma.h"
 #include "i2c.h"
+#include "spi.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -28,7 +31,6 @@
 #include "led.h"
 #include "key.h"
 #include "bsp_uart.h"
-#include "oled.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,15 +51,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-LED_Instance *led0;
-LED_Instance *led1;
 UART_Instance *uart1;
-OLED_Instance *oled;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 static void MPU_Config(void);
+void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 void UART1_UserCallback(void *device_instance, uint16_t size);
 /* USER CODE END PFP */
@@ -93,6 +94,9 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
+  /* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
+
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -102,59 +106,42 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_I2C1_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_TIM12_Init();
+  MX_TIM15_Init();
+  MX_SPI2_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   /* -------------------------------- 自定义代码开始 -------------------------------- */
   /* ---------------- 注册设备 ---------------- */
-  /* 配置LED参数并注册LED实例 */
-  LED_InitTypedef led0_init = 
-  {
-    .port = GPIOE,
-    .pin = GPIO_PIN_5,  // LED0在PE5上
-    .attr = 1 // LED0为高电平时点亮
-  };
-  led0 = LED_Register(&led0_init);
-  LED_InitTypedef led1_init = 
-  {
-    .port = GPIOE,
-    .pin = GPIO_PIN_6,  // LED1在PE6上
-    .attr = 1 // LED1为高电平时点亮
-  };
-  led1 = LED_Register(&led1_init);
-
   /* 配置串口参数并注册串口实例 */
   UART_Init_Config_s uart1_init = 
   {
     .recv_buff_size = 128,                // 串口接收缓冲区大小
     .usart_handle = &huart1,              // 串口1
-    .module_callback = UART1_UserCallback // 回调函数
+    .module_callback = NULL, // 回调函数
   };
   uart1 = UART_Register(&uart1_init);
   uart1->device_instance = (void *)uart1;
-
-  /* 配置OLED屏幕并注册实例 */
-  OLED_InitTypedef oled_init = 
-  {
-    .hi2c = &hi2c1, // I2C1
-  };
-  oled = OLED_Register(&oled_init);
-
-  /* ---------------- 初始化设备 ---------------- */
-  HAL_Delay(20);
-  OLED_Init(oled);
   
   /* USER CODE END 2 */
+
+  /* Init scheduler */
+  osKernelInitialize();  /* Call init function for freertos objects (in cmsis_os2.c) */
+  MX_FREERTOS_Init();
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    OLED_NewFrame(oled);
-    OLED_PrintString(oled, 1, 1, "Hello World!", &font16x16, OLED_COLOR_NORMAL);
-    OLED_ShowFrame(oled);
-
     UART_Send(uart1, (uint8_t*)"UART Connecting.\r\n", strlen("UART Connecting.\r\n"), UART_TRANSFER_BLOCKING);
-
-    // HAL_Delay(1000);
+    HAL_Delay(1000);
     /*-------------------------------- 自定义代码结束 --------------------------------*/
     /* USER CODE END WHILE */
 
@@ -185,8 +172,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 1;
@@ -221,34 +210,26 @@ void SystemClock_Config(void)
   }
 }
 
-/* USER CODE BEGIN 4 */
-void UART1_UserCallback(void *device_instance, uint16_t size)
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
 {
-  UART_Instance *instance = (UART_Instance *)device_instance;
-  switch (instance->recv_buff[0])
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CKPER;
+  PeriphClkInitStruct.CkperClockSelection = RCC_CLKPSOURCE_HSI;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
-  case 'R':
-    LED_On(led0);
-    break;
-
-  case 'G':
-    LED_On(led1);
-    break;
-    
-  case 'B':
-    
-    break;
-
-  case 'O':
-    LED_Off(led0);
-    LED_Off(led1);
-    break;
-  
-  default:
-
-    break;
+    Error_Handler();
   }
 }
+
+/* USER CODE BEGIN 4 */
+
 /* USER CODE END 4 */
 
  /* MPU Configuration */
@@ -278,6 +259,28 @@ void MPU_Config(void)
   /* Enables the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 
+}
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM7 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM7)
+  {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
 }
 
 /**

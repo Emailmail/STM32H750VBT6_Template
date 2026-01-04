@@ -8,7 +8,7 @@ static uint8_t device_num = 0;                             // The number of devi
 static int32_t stm32_ms6dsv_i2c_write_reg(void *handle, uint8_t reg, const uint8_t *bufp, uint16_t len)
 {
     return (int32_t)HAL_I2C_Mem_Write(device_instance[device_index]->hi2c,
-                                      LSM6DSV16X_I2C_ADD_L >> 1,
+                                      LSM6DSV16X_I2C_ADD_L,
                                       reg,
                                       I2C_MEMADD_SIZE_8BIT,
                                       (uint8_t *)bufp,
@@ -19,7 +19,7 @@ static int32_t stm32_ms6dsv_i2c_write_reg(void *handle, uint8_t reg, const uint8
 static int32_t stm32_ms6dsv_i2c_read_reg(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len)
 {
     return (int32_t)HAL_I2C_Mem_Read(device_instance[device_index]->hi2c,
-                                     LSM6DSV16X_I2C_ADD_L >> 1,
+                                     LSM6DSV16X_I2C_ADD_L,
                                      reg,
                                      I2C_MEMADD_SIZE_8BIT,
                                      (uint8_t *)bufp,
@@ -68,35 +68,35 @@ int16_t LSM6DSV_Init(LSM6DSV_Instance *instance)
 
     device_index = instance->device_id;
 
-    /* ³õÊ¼»¯Ó²¼þ½Ó¿Ú */
+    /* åˆå§‹åŒ–ç¡¬ä»¶æŽ¥å£ */
     HAL_GPIO_WritePin(instance->sa0_port, instance->sa0_pin, GPIO_PIN_RESET);
 
-    /* Ð£ÑéATK-MS6DSVÄ£¿éID */
+    /* æ ¡éªŒATK-MS6DSVæ¨¡å—ID */
     lsm6dsv16x_device_id_get(&stm32_ctx, &lsm6dsv16x_id);
     if (lsm6dsv16x_id != LSM6DSV16X_ID)
     {
         return 1;
     }
 
-    /* ¸´Î»ATK-MS6DSVÄ£¿é */
+    /* å¤ä½ATK-MS6DSVæ¨¡å— */
     lsm6dsv16x_reset_set(&stm32_ctx, LSM6DSV16X_RESTORE_CTRL_REGS);
     do
     {
         lsm6dsv16x_reset_get(&stm32_ctx, &rst);
     } while (rst != LSM6DSV16X_READY);
 
-    /* Ê¹ÄÜ¿éÊý¾Ý¸üÐÂ¹¦ÄÜ */
+    /* ä½¿èƒ½å—æ•°æ®æ›´æ–°åŠŸèƒ½ */
     lsm6dsv16x_block_data_update_set(&stm32_ctx, PROPERTY_ENABLE);
 
-    /* ÅäÖÃ¼ÓËÙ¶È¼ÆºÍÍÓÂÝÒÇµÄODR */
-    lsm6dsv16x_xl_data_rate_set(&stm32_ctx, LSM6DSV16X_ODR_AT_60Hz);
-    lsm6dsv16x_gy_data_rate_set(&stm32_ctx, LSM6DSV16X_ODR_AT_60Hz);
+    /* é…ç½®åŠ é€Ÿåº¦è®¡å’Œé™€èžºä»ªçš„ODR */
+    lsm6dsv16x_xl_data_rate_set(&stm32_ctx, LSM6DSV16X_ODR_AT_1920Hz);
+    lsm6dsv16x_gy_data_rate_set(&stm32_ctx, LSM6DSV16X_ODR_AT_1920Hz);
 
-    /* ÅäÖÃ¼ÓËÙ¶È¼ÆºÍÍÓÂÝÒÇµÄÁ¿³Ì */
+    /* é…ç½®åŠ é€Ÿåº¦è®¡å’Œé™€èžºä»ªçš„é‡ç¨‹ */
     lsm6dsv16x_xl_full_scale_set(&stm32_ctx, LSM6DSV16X_2g);
     lsm6dsv16x_gy_full_scale_set(&stm32_ctx, LSM6DSV16X_2000dps);
 
-    /* ÅäÖÃÂË²¨Æ÷ */
+    /* é…ç½®æ»¤æ³¢å™¨ */
     lsm6dsv16x_filt_settling_mask_t filt_settling_mask;
     filt_settling_mask.drdy = PROPERTY_ENABLE;
     filt_settling_mask.irq_xl = PROPERTY_ENABLE;
@@ -119,18 +119,18 @@ void LSM6DSV_ReadAccel(LSM6DSV_Instance *instance)
 {
     int16_t data_raw_acceleration[3];
     lsm6dsv16x_acceleration_raw_get(&stm32_ctx, data_raw_acceleration);
-    instance->accel[0] = lsm6dsv16x_from_fs2_to_mg(data_raw_acceleration[0]);
-    instance->accel[1] = lsm6dsv16x_from_fs2_to_mg(data_raw_acceleration[1]);
-    instance->accel[2] = lsm6dsv16x_from_fs2_to_mg(data_raw_acceleration[2]);
+    instance->accel[0] = lsm6dsv16x_from_fs2_to_mg(data_raw_acceleration[0]) / 1000.0f;
+    instance->accel[1] = lsm6dsv16x_from_fs2_to_mg(data_raw_acceleration[1]) / 1000.0f;
+    instance->accel[2] = lsm6dsv16x_from_fs2_to_mg(data_raw_acceleration[2]) / 1000.0f;
 }
 
 void LSM6DSV_ReadGyro(LSM6DSV_Instance *instance)
 {
     int16_t data_raw_angular_rate[3];
     lsm6dsv16x_angular_rate_raw_get(&stm32_ctx, data_raw_angular_rate);
-    instance->gyro[0] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[0]);
-    instance->gyro[1] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[1]);
-    instance->gyro[2] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[2]);
+    instance->gyro[0] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[0]) / 1000.0f;
+    instance->gyro[1] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[1]) / 1000.0f;
+    instance->gyro[2] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[2]) / 1000.0f;
 }
 
 void LSM6DSV_ReadTemperature(LSM6DSV_Instance *instance)
@@ -138,5 +138,18 @@ void LSM6DSV_ReadTemperature(LSM6DSV_Instance *instance)
     int16_t data_raw_temperature;
     lsm6dsv16x_temperature_raw_get(&stm32_ctx, &data_raw_temperature);
     instance->temperature = lsm6dsv16x_from_lsb_to_celsius(data_raw_temperature);
+}
+
+uint8_t LSM6DSV_ReadData(LSM6DSV_Instance *instance)
+{
+    LSM6DSV_IsBusy(instance);
+    if(instance->drdy.drdy_xl && instance->drdy.drdy_gy && instance->drdy.drdy_temp)
+    {
+        LSM6DSV_ReadAccel(instance);
+        LSM6DSV_ReadGyro(instance);
+        LSM6DSV_ReadTemperature(instance);
+        return 1;
+    }
+    return 0;
 }
 /* --------------------------------- User Function  End  ---------------------------------*/

@@ -31,16 +31,18 @@ typedef struct
     uint8_t device_id;
     lsm6dsv16x_data_ready_t drdy;
 
-    int16_t data_raw_acceleration[3];
-    int16_t data_raw_angular_rate[3];
-    int16_t data_raw_temperature;
-
-    float accel[3];
-    float gyro[3];
+    float accel[3]; // g
+    float gyro[3];  // dps
     float temperature;
 } LSM6DSV_Instance;
 
-
+LSM6DSV_Instance *LSM6DSV_Register(LSM6DSV_InitTypedef *init);
+int16_t LSM6DSV_Init(LSM6DSV_Instance *instance);
+int32_t LSM6DSV_IsBusy(LSM6DSV_Instance *instance);
+void LSM6DSV_ReadAccel(LSM6DSV_Instance *instance);
+void LSM6DSV_ReadGyro(LSM6DSV_Instance *instance);
+void LSM6DSV_ReadTemperature(LSM6DSV_Instance *instance);
+uint8_t LSM6DSV_ReadData(LSM6DSV_Instance *instance);
 #endif
 
 

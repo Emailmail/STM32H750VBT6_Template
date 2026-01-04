@@ -6,25 +6,25 @@
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_hal_gpio.h"
 
-#define DELAY_TIME 50 // Ïû¶¶ÑÓÊ±µÄÊ±¼ä,µ¥Î»ms
+#define DELAY_TIME 50 // æ¶ˆæŠ–å»¶æ—¶çš„æ—¶é—´,å•ä½ms
 
 typedef struct
 {
     GPIO_TypeDef *port;
     uint16_t pin;
-    bool attr;  // 0:ËÉ¿ªÊ±ÎªµÍµçÆ½;1:ËÉ¿ªÊ±Îª¸ßµçÆ½
-    uint8_t dt; // °´¼ü¼ì²â¼ä¸ô
+    bool attr;  // 0:æ¾å¼€æ—¶ä¸ºä½ç”µå¹³;1:æ¾å¼€æ—¶ä¸ºé«˜ç”µå¹³
+    uint8_t dt; // æŒ‰é”®æ£€æµ‹é—´éš”
 } Key_InitTypedef;
 
 typedef struct
 {
     GPIO_TypeDef *port;
     uint16_t pin;
-    bool attr;           // 0:ËÉ¿ªÊ±ÎªµÍµçÆ½;1:ËÉ¿ªÊ±Îª¸ßµçÆ½
-    uint8_t delay_count; // Ïû¶¶Ê±ĞèÒªµÄÑÓÊ±´ÎÊı,ÖÁÉÙÎª1
-    uint8_t count;       // µ±Ç°µÄ°´¼ü¼ì²â"×´Ì¬"
-    uint8_t timer;       // ¼ÆÊıÆ÷
-    bool state;          // 0:ËÉ¿ª;1:°´ÏÂ
+    bool attr;           // 0:æ¾å¼€æ—¶ä¸ºä½ç”µå¹³;1:æ¾å¼€æ—¶ä¸ºé«˜ç”µå¹³
+    uint8_t delay_count; // æ¶ˆæŠ–æ—¶éœ€è¦çš„å»¶æ—¶æ¬¡æ•°,è‡³å°‘ä¸º1
+    uint8_t count;       // å½“å‰çš„æŒ‰é”®æ£€æµ‹"çŠ¶æ€"
+    uint8_t timer;       // è®¡æ•°å™¨
+    bool state;          // 0:æ¾å¼€;1:æŒ‰ä¸‹
 } Key_Instance;
 
 Key_Instance *Key_Register(Key_InitTypedef *init);

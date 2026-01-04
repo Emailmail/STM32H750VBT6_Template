@@ -1,7 +1,7 @@
 #include "key.h"
 
 /**
- * @brief °´¼ü×¢²á
+ * @brief æŒ‰é”®æ³¨å†Œ
  */
 Key_Instance *Key_Register(Key_InitTypedef *init)
 {
@@ -26,16 +26,16 @@ Key_Instance *Key_Register(Key_InitTypedef *init)
 }
 
 /**
- * @brief °´¼ü¼ì²â(ĞèÒª°´ÕÕÒ»¶¨ÖÜÆÚµ÷ÓÃ´Ëº¯Êı)
+ * @brief æŒ‰é”®æ£€æµ‹(éœ€è¦æŒ‰ç…§ä¸€å®šå‘¨æœŸè°ƒç”¨æ­¤å‡½æ•°)
  */
 bool Key_Detect(Key_Instance *instance)
 {
-    /* ¼ì²âµçÆ½ */
+    /* æ£€æµ‹ç”µå¹³ */
     bool level = (bool)HAL_GPIO_ReadPin(instance->port, instance->pin);
 
     switch (instance->count)
     {
-    /* Î´±»°´ÏÂ,Èô¼ì²âµ½µçÆ½¸Ä±ä(¼´ÈÏÎª±»°´ÏÂ)Ôò½øÈëÏÂÒ»½×¶Î */
+    /* æœªè¢«æŒ‰ä¸‹,è‹¥æ£€æµ‹åˆ°ç”µå¹³æ”¹å˜(å³è®¤ä¸ºè¢«æŒ‰ä¸‹)åˆ™è¿›å…¥ä¸‹ä¸€é˜¶æ®µ */
     case 0:
         if (level == !instance->attr)
         {
@@ -44,7 +44,7 @@ bool Key_Detect(Key_Instance *instance)
         }
         break;
 
-    /* Ïû¶¶ */
+    /* æ¶ˆæŠ– */
     case 1:
         if (instance->timer < instance->delay_count)
         {
@@ -52,21 +52,21 @@ bool Key_Detect(Key_Instance *instance)
         }
         else
         {
-            /* Ïû¶¶Íê³É£¬È·ÈÏ°´¼ü×´Ì¬ */
+            /* æ¶ˆæŠ–å®Œæˆï¼Œç¡®è®¤æŒ‰é”®çŠ¶æ€ */
             if (level == !instance->attr)
             {
                 instance->count = 2;
                 instance->timer = 0;
-                instance->state = 1;  // È·ÈÏ°´¼ü°´ÏÂ
+                instance->state = 1;  // ç¡®è®¤æŒ‰é”®æŒ‰ä¸‹
             }
             else
             {
-                instance->count = 0;    // Ïû¶¶ÆÚ¼ä»Ö¸´Ô­×´£¬ÊÓÎª¶¶¶¯
+                instance->count = 0;    // æ¶ˆæŠ–æœŸé—´æ¢å¤åŸçŠ¶ï¼Œè§†ä¸ºæŠ–åŠ¨
             }
         }
         break;
 
-    /* ¼ì²âµ½µçÆ½»Ö¸´,ÔòÈÏÎªÒÑ¾­ËÉ¿ª,½øÈëÏÂÒ»½×¶Î */
+    /* æ£€æµ‹åˆ°ç”µå¹³æ¢å¤,åˆ™è®¤ä¸ºå·²ç»æ¾å¼€,è¿›å…¥ä¸‹ä¸€é˜¶æ®µ */
     case 2:
         if (level == instance->attr)
         {
@@ -75,7 +75,7 @@ bool Key_Detect(Key_Instance *instance)
         }
         break;
 
-    /* ÔÙ´ÎÏû¶¶,Ïû¶¶Íê±ÏºóÖØĞÂ¿ªÊ¼ĞÂÒ»ÂÖ¼ì²â */
+    /* å†æ¬¡æ¶ˆæŠ–,æ¶ˆæŠ–å®Œæ¯•åé‡æ–°å¼€å§‹æ–°ä¸€è½®æ£€æµ‹ */
     case 3:
         if(instance->timer < instance->delay_count)
         {
@@ -83,20 +83,20 @@ bool Key_Detect(Key_Instance *instance)
         }
         else
         {
-            /* Ïû¶¶Íê³É£¬È·ÈÏÊÍ·Å×´Ì¬ */
+            /* æ¶ˆæŠ–å®Œæˆï¼Œç¡®è®¤é‡Šæ”¾çŠ¶æ€ */
             if (level == instance->attr)
             {
                 instance->count = 0;
-                instance->state = 0;  // È·ÈÏ°´¼üÊÍ·Å
+                instance->state = 0;  // ç¡®è®¤æŒ‰é”®é‡Šæ”¾
             }
             else
             {
-                instance->count = 2;    // Ïû¶¶ÆÚ¼ä»Ö¸´Ô­×´£¬ÊÓÎª¶¶¶¯
+                instance->count = 2;    // æ¶ˆæŠ–æœŸé—´æ¢å¤åŸçŠ¶ï¼Œè§†ä¸ºæŠ–åŠ¨
             }
         }
         break;
     }
 
-    /* ·µ»Ø°´¼ü×´Ì¬ */
+    /* è¿”å›æŒ‰é”®çŠ¶æ€ */
     return instance->state;
 }

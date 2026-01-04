@@ -2,28 +2,29 @@
 #define __LED_H
 #include "stdlib.h"
 #include "stdbool.h"
+#include "stm32h750xx.h"
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_hal_gpio.h"
 
 /**
- * @brief ×¢²áLEDÊµÀıÊ±µÄ³õÊ¼»¯½á¹¹Ìå
+ * @brief æ³¨å†ŒLEDå®ä¾‹æ—¶çš„åˆå§‹åŒ–ç»“æ„ä½“
  */
 typedef struct
 {
     GPIO_TypeDef *port;
     uint16_t pin;
-    bool attr;  // 0:LEDµÍµçÆ½Ê±Ï¨Ãğ; 1:LED¸ßµçÆ½Ê±Ï¨Ãğ
+    bool attr;  // 0:LEDä½ç”µå¹³æ—¶ç†„ç­; 1:LEDé«˜ç”µå¹³æ—¶ç†„ç­
 } LED_InitTypedef;
 
 /**
- * @brief LEDÊµÀı½á¹¹ÌåÀàĞÍ
+ * @brief LEDå®ä¾‹ç»“æ„ä½“ç±»å‹
  */
 typedef struct
 {
 	GPIO_TypeDef *port;
     uint16_t pin;
-    bool attr;  // 0:LEDµÍµçÆ½Ê±Ï¨Ãğ; 1:LED¸ßµçÆ½Ê±Ï¨Ãğ
-    bool state; // 0:LEDÏ¨Ãğ; 1:LEDÁÁÆğ
+    bool attr;  // 0:LEDä½ç”µå¹³æ—¶ç†„ç­; 1:LEDé«˜ç”µå¹³æ—¶ç†„ç­
+    bool state; // 0:LEDç†„ç­; 1:LEDäº®èµ·
 } LED_Instance;
 
 LED_Instance *LED_Register(LED_InitTypedef *init);
