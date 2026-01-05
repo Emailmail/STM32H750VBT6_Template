@@ -66,12 +66,16 @@ typedef struct
     uint16_t cs_pin;
     GPIO_TypeDef *blk_port;
     uint16_t blk_pin;
+
+    /* 地址窗的偏移 */
+    uint16_t xoffset;
+    uint16_t yoffset;
 } ST7789V2_Instance;
 
 uint32_t mypow(uint8_t m, uint8_t n);                                                                                                                   // 求幂
 void ST7789V2_Address_Set(ST7789V2_Instance *instance, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);                                             // 设置坐标函数
-ST7789V2_Instance *ST7789V2_Register(ST7789V2_InitTypedef *init);                                                                                                  // 注册实例
-void ST7789V2_Init(ST7789V2_Instance *instance);                                                                                                        // LCD初始化
+ST7789V2_Instance *ST7789V2_Register(ST7789V2_InitTypedef *init);                                                                                       // 注册实例
+void ST7789V2_Init(ST7789V2_Instance *instance, uint16_t xoffset, uint16_t yoffset);                                                                    // LCD初始化
 void ST7789V2_Fill(ST7789V2_Instance *instance, uint16_t xsta, uint16_t ysta, uint16_t xend, uint16_t yend, uint16_t color);                            // 指定区域填充颜色
 void ST7789V2_DrawPoint(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint16_t color);                                                           // 在指定位置画一个点
 void ST7789V2_DrawLine(ST7789V2_Instance *instance, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color);                                // 在指定位置画一条线

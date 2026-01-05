@@ -214,8 +214,11 @@ ST7789V2_Instance *ST7789V2_Register(ST7789V2_InitTypedef *init)
  * @param
  * @retval
  **/
-void ST7789V2_Init(ST7789V2_Instance *instance)
+void ST7789V2_Init(ST7789V2_Instance *instance, uint16_t xoffset, uint16_t yoffset)
 {
+    instance->xoffset = xoffset;
+    instance->yoffset = yoffset;
+
     st7789v2_blk_set_level(instance, 0); // 关闭背光
     st7789v2_res_set_level(instance, 0); // 复位
 
@@ -329,6 +332,10 @@ void ST7789V2_Init(ST7789V2_Instance *instance)
 void ST7789V2_Fill(ST7789V2_Instance *instance, uint16_t xsta, uint16_t ysta, uint16_t xend, uint16_t yend, uint16_t color)
 {
     uint16_t i, j;
+    xsta += instance->xoffset;
+    ysta += instance->yoffset;
+    xend += instance->xoffset;
+    yend += instance->yoffset;
     ST7789V2_Address_Set(instance, xsta, ysta, xend - 1, yend - 1); // 设置显示范围
     for (i = ysta; i < yend; i++)
     {
@@ -347,7 +354,7 @@ void ST7789V2_Fill(ST7789V2_Instance *instance, uint16_t xsta, uint16_t ysta, ui
  **/
 void ST7789V2_DrawPoint(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint16_t color)
 {
-    ST7789V2_Address_Set(instance, x, y, x, y); // 设置光标位置
+    ST7789V2_Address_Set(instance, x + instance->xoffset, y + instance->yoffset, x + instance->xoffset, y + instance->yoffset); // 设置光标位置
     ST7789V2_WR_DATA(instance, color);
 }
 
@@ -504,7 +511,7 @@ void ST7789V2_ShowChinese12x12(ST7789V2_Instance *instance, uint16_t x, uint16_t
     {
         if ((tfont12[k].Index[0] == *(s)) && (tfont12[k].Index[1] == *(s + 1)))
         {
-            ST7789V2_Address_Set(instance, x, y, x + sizey - 1, y + sizey - 1);
+            ST7789V2_Address_Set(instance, x + instance->xoffset, y + instance->yoffset, x + instance->xoffset + sizey - 1, y + instance->yoffset + sizey - 1);
             for (i = 0; i < TypefaceNum; i++)
             {
                 for (j = 0; j < 8; j++)
@@ -564,7 +571,7 @@ void ST7789V2_ShowChinese16x16(ST7789V2_Instance *instance, uint16_t x, uint16_t
     {
         if ((tfont16[k].Index[0] == *(s)) && (tfont16[k].Index[1] == *(s + 1)))
         {
-            ST7789V2_Address_Set(instance, x, y, x + sizey - 1, y + sizey - 1);
+            ST7789V2_Address_Set(instance, x + instance->xoffset, y + instance->yoffset, x + instance->xoffset + sizey - 1, y + instance->yoffset + sizey - 1);
             for (i = 0; i < TypefaceNum; i++)
             {
                 for (j = 0; j < 8; j++)
@@ -624,7 +631,7 @@ void ST7789V2_ShowChinese24x24(ST7789V2_Instance *instance, uint16_t x, uint16_t
     {
         if ((tfont24[k].Index[0] == *(s)) && (tfont24[k].Index[1] == *(s + 1)))
         {
-            ST7789V2_Address_Set(instance, x, y, x + sizey - 1, y + sizey - 1);
+            ST7789V2_Address_Set(instance, x + instance->xoffset, y + instance->yoffset, x + instance->xoffset + sizey - 1, y + instance->yoffset + sizey - 1);
             for (i = 0; i < TypefaceNum; i++)
             {
                 for (j = 0; j < 8; j++)
@@ -684,7 +691,7 @@ void ST7789V2_ShowChinese32x32(ST7789V2_Instance *instance, uint16_t x, uint16_t
     {
         if ((tfont32[k].Index[0] == *(s)) && (tfont32[k].Index[1] == *(s + 1)))
         {
-            ST7789V2_Address_Set(instance, x, y, x + sizey - 1, y + sizey - 1);
+            ST7789V2_Address_Set(instance, x + instance->xoffset, y + instance->yoffset, x + instance->xoffset + sizey - 1, y + instance->yoffset + sizey - 1);
             for (i = 0; i < TypefaceNum; i++)
             {
                 for (j = 0; j < 8; j++)
@@ -739,7 +746,7 @@ void ST7789V2_ShowChar(ST7789V2_Instance *instance, uint16_t x, uint16_t y, uint
     sizex = sizey / 2;
     TypefaceNum = (sizex / 8 + ((sizex % 8) ? 1 : 0)) * sizey;
     num = num - ' ';                                                    // 得到偏移后的值
-    ST7789V2_Address_Set(instance, x, y, x + sizex - 1, y + sizey - 1); // 设置光标位置
+    ST7789V2_Address_Set(instance, x + instance->xoffset, y + instance->yoffset, x + sizex - 1 + instance->xoffset, y + sizey - 1 + instance->yoffset); // 设置光标位置
     for (i = 0; i < TypefaceNum; i++)
     {
         if (sizey == 12)

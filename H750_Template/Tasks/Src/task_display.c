@@ -17,7 +17,7 @@ void StartDisplayTask(void *argument)
             .blk_port = GPIOC,
             .blk_pin = GPIO_PIN_0};
     st7789v2 = ST7789V2_Register(&init);
-    ST7789V2_Init(st7789v2);
+    ST7789V2_Init(st7789v2, 0, 19);
     ST7789V2_Fill(st7789v2, 0, 0, LCD_W, LCD_H, WHITE);
 
     for (;;)

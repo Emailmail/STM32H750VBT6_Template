@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Template\Template.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Template\Template.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Mon Jan  5 00:37:16 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Mon Jan  5 09:34:35 2026
 <BR><P>
 <H3>Maximum Stack Usage =        472 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2150,7 +2150,7 @@ Global Symbols
 <LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7789V2_Fill
 </UL>
 
-<P><STRONG><a name="[18f]"></a>ST7789V2_DrawPoint</STRONG> (Thumb, 52 bytes, Stack size 24 bytes, st7789v2.o(.text.ST7789V2_DrawPoint))
+<P><STRONG><a name="[18f]"></a>ST7789V2_DrawPoint</STRONG> (Thumb, 64 bytes, Stack size 24 bytes, st7789v2.o(.text.ST7789V2_DrawPoint))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = ST7789V2_DrawPoint &rArr; ST7789V2_Address_Set &rArr; ST7789V2_WR_REG &rArr; ST7789V2_Writ_Bus &rArr; st7789v2_read_write_byte &rArr; HAL_SPI_TransmitReceive &rArr; SPI_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[18c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7789V2_Address_Set
@@ -2159,7 +2159,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[196]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7789V2_ShowChar
 </UL>
 
-<P><STRONG><a name="[190]"></a>ST7789V2_Fill</STRONG> (Thumb, 166 bytes, Stack size 32 bytes, st7789v2.o(.text.ST7789V2_Fill))
+<P><STRONG><a name="[190]"></a>ST7789V2_Fill</STRONG> (Thumb, 222 bytes, Stack size 32 bytes, st7789v2.o(.text.ST7789V2_Fill))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = ST7789V2_Fill &rArr; ST7789V2_Address_Set &rArr; ST7789V2_WR_REG &rArr; ST7789V2_Writ_Bus &rArr; st7789v2_read_write_byte &rArr; HAL_SPI_TransmitReceive &rArr; SPI_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[18c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7789V2_Address_Set
@@ -2168,8 +2168,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDisplayTask
 </UL>
 
-<P><STRONG><a name="[191]"></a>ST7789V2_Init</STRONG> (Thumb, 608 bytes, Stack size 88 bytes, st7789v2.o(.text.ST7789V2_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 248<LI>Call Chain = ST7789V2_Init &rArr; ST7789V2_WR_REG &rArr; ST7789V2_Writ_Bus &rArr; st7789v2_read_write_byte &rArr; HAL_SPI_TransmitReceive &rArr; SPI_WaitOnFlagUntilTimeout
+<P><STRONG><a name="[191]"></a>ST7789V2_Init</STRONG> (Thumb, 632 bytes, Stack size 96 bytes, st7789v2.o(.text.ST7789V2_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 256<LI>Call Chain = ST7789V2_Init &rArr; ST7789V2_WR_REG &rArr; ST7789V2_Writ_Bus &rArr; st7789v2_read_write_byte &rArr; HAL_SPI_TransmitReceive &rArr; SPI_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 <LI><a href="#[18d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7789V2_WR_REG
@@ -2188,7 +2188,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDisplayTask
 </UL>
 
-<P><STRONG><a name="[196]"></a>ST7789V2_ShowChar</STRONG> (Thumb, 578 bytes, Stack size 56 bytes, st7789v2.o(.text.ST7789V2_ShowChar))
+<P><STRONG><a name="[196]"></a>ST7789V2_ShowChar</STRONG> (Thumb, 590 bytes, Stack size 56 bytes, st7789v2.o(.text.ST7789V2_ShowChar))
 <BR><BR>[Stack]<UL><LI>Max Depth = 264<LI>Call Chain = ST7789V2_ShowChar &rArr; ST7789V2_DrawPoint &rArr; ST7789V2_Address_Set &rArr; ST7789V2_WR_REG &rArr; ST7789V2_Writ_Bus &rArr; st7789v2_read_write_byte &rArr; HAL_SPI_TransmitReceive &rArr; SPI_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[18f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7789V2_DrawPoint
@@ -2285,8 +2285,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.text.MX_FREERTOS_Init)
 </UL>
-<P><STRONG><a name="[a4]"></a>StartDisplayTask</STRONG> (Thumb, 360 bytes, Stack size 112 bytes, task_display.o(.text.StartDisplayTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 440<LI>Call Chain = StartDisplayTask &rArr; ST7789V2_ShowIntNum &rArr; ST7789V2_ShowChar &rArr; ST7789V2_DrawPoint &rArr; ST7789V2_Address_Set &rArr; ST7789V2_WR_REG &rArr; ST7789V2_Writ_Bus &rArr; st7789v2_read_write_byte &rArr; HAL_SPI_TransmitReceive &rArr; SPI_WaitOnFlagUntilTimeout
+<P><STRONG><a name="[a4]"></a>StartDisplayTask</STRONG> (Thumb, 366 bytes, Stack size 120 bytes, task_display.o(.text.StartDisplayTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 448<LI>Call Chain = StartDisplayTask &rArr; ST7789V2_ShowIntNum &rArr; ST7789V2_ShowChar &rArr; ST7789V2_DrawPoint &rArr; ST7789V2_Address_Set &rArr; ST7789V2_WR_REG &rArr; ST7789V2_Writ_Bus &rArr; st7789v2_read_write_byte &rArr; HAL_SPI_TransmitReceive &rArr; SPI_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[197]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7789V2_ShowIntNum
