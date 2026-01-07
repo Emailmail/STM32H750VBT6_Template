@@ -89,8 +89,12 @@ int16_t LSM6DSV_Init(LSM6DSV_Instance *instance)
     lsm6dsv16x_block_data_update_set(&stm32_ctx, PROPERTY_ENABLE);
 
     /* 配置加速度计和陀螺仪的ODR */
-    lsm6dsv16x_xl_data_rate_set(&stm32_ctx, LSM6DSV16X_ODR_AT_1920Hz);
-    lsm6dsv16x_gy_data_rate_set(&stm32_ctx, LSM6DSV16X_ODR_AT_1920Hz);
+    lsm6dsv16x_xl_data_rate_set(&stm32_ctx, LSM6DSV16X_ODR_HA02_AT_3200Hz);
+    lsm6dsv16x_gy_data_rate_set(&stm32_ctx, LSM6DSV16X_ODR_HA02_AT_3200Hz);
+
+    /* 配置为高性能模式 */
+    lsm6dsv16x_xl_mode_set(&stm32_ctx, LSM6DSV16X_XL_HIGH_PERFORMANCE_MD);
+    lsm6dsv16x_gy_mode_set(&stm32_ctx, LSM6DSV16X_GY_HIGH_PERFORMANCE_MD);
 
     /* 配置加速度计和陀螺仪的量程 */
     lsm6dsv16x_xl_full_scale_set(&stm32_ctx, LSM6DSV16X_2g);
@@ -106,6 +110,10 @@ int16_t LSM6DSV_Init(LSM6DSV_Instance *instance)
     lsm6dsv16x_filt_gy_lp1_bandwidth_set(&stm32_ctx, LSM6DSV16X_GY_ULTRA_LIGHT);
     lsm6dsv16x_filt_xl_lp2_set(&stm32_ctx, PROPERTY_ENABLE);
     lsm6dsv16x_filt_xl_lp2_bandwidth_set(&stm32_ctx, LSM6DSV16X_XL_STRONG);
+
+    /* 启用高精度ODR模式以提高精度 */
+    lsm6dsv16x_xl_mode_set(&stm32_ctx, LSM6DSV16X_XL_HIGH_ACCURACY_ODR_MD);
+    lsm6dsv16x_gy_mode_set(&stm32_ctx, LSM6DSV16X_GY_HIGH_ACCURACY_ODR_MD);
 
     return 0;
 }
@@ -128,9 +136,9 @@ void LSM6DSV_ReadGyro(LSM6DSV_Instance *instance)
 {
     int16_t data_raw_angular_rate[3];
     lsm6dsv16x_angular_rate_raw_get(&stm32_ctx, data_raw_angular_rate);
-    instance->gyro[0] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[0]) / 1000.0f;
-    instance->gyro[1] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[1]) / 1000.0f;
-    instance->gyro[2] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[2]) / 1000.0f;
+    instance->gyro[0] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[0]) * MDPS_TO_RAD_PER_SEC;
+    instance->gyro[1] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[1]) * MDPS_TO_RAD_PER_SEC;
+    instance->gyro[2] = lsm6dsv16x_from_fs2000_to_mdps(data_raw_angular_rate[2]) * MDPS_TO_RAD_PER_SEC;
 }
 
 void LSM6DSV_ReadTemperature(LSM6DSV_Instance *instance)

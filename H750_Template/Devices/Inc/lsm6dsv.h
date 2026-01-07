@@ -10,6 +10,7 @@
 #include "lsm6dsv16x_reg.h"
 
 #define LSM6DSV_NUM_MAX 4
+#define MDPS_TO_RAD_PER_SEC  0.000017453292519943295f
 
 typedef struct
 {
