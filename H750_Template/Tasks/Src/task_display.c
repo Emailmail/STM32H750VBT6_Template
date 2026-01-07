@@ -1,7 +1,11 @@
 #include "task_display.h"
 #include "spi.h"
+#include "task_attitude.h"
+#include "stdio.h"
 
 ST7789V2_Instance *st7789v2;
+
+uint8_t Disp_Line[20];
 
 void StartDisplayTask(void *argument)
 {
@@ -22,14 +26,20 @@ void StartDisplayTask(void *argument)
 
     for (;;)
     {
-        // ST7789V2_ShowChinese(st7789v2, 0, 180, (uint8_t *)"中景园电子", RED, WHITE, 32, 0);
-        ST7789V2_ShowString(st7789v2, 0, 0, (uint8_t *)"LCD_W:", RED, WHITE, 16, 0);
-        ST7789V2_ShowIntNum(st7789v2, 48, 0, LCD_W, 3, RED, WHITE, 16);
-        ST7789V2_ShowString(st7789v2, 80, 0, (uint8_t *)"LCD_H:", RED, WHITE, 16, 0);
-        ST7789V2_ShowIntNum(st7789v2, 128, 0, LCD_H, 3, RED, WHITE, 16);
-        ST7789V2_ShowString(st7789v2, 80, 0, (uint8_t *)"LCD_H:", RED, WHITE, 16, 0);
-        ST7789V2_ShowString(st7789v2, 0, 30, (uint8_t *)"Increaseing Nun:", RED, WHITE, 16, 0);
+        sprintf((char *)Disp_Line, "Pitch: %8.2f ", pitch);
+        ST7789V2_ShowString(st7789v2, 10, 20, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
+        sprintf((char *)Disp_Line, " Roll: %8.2f ", roll);
+        ST7789V2_ShowString(st7789v2, 10, 40, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
+        sprintf((char *)Disp_Line, "  Yaw: %8.2f ", yaw);
+        ST7789V2_ShowString(st7789v2, 10, 60, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
 
-        vTaskDelay(pdMS_TO_TICKS(200));
+        // ST7789V2_ShowString(st7789v2, 10, 20, (uint8_t *)"Pitch:", RED, WHITE, 16, 0);
+        // ST7789V2_ShowFloatNum1(st7789v2, 80, 20, pitch, 6, RED, WHITE, 16);
+        // ST7789V2_ShowString(st7789v2, 10, 40, (uint8_t *)"Roll:", RED, WHITE, 16, 0);
+        // ST7789V2_ShowFloatNum1(st7789v2, 80, 40, roll, 6, RED, WHITE, 16);
+        // ST7789V2_ShowString(st7789v2, 10, 60, (uint8_t *)"Yaw:", RED, WHITE, 16, 0);
+        // ST7789V2_ShowFloatNum1(st7789v2, 80, 60, yaw, 6, RED, WHITE, 16);
+
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }

@@ -40,4 +40,7 @@ template/task_display.o: ..\Tasks\Src\task_display.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\task.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\list.h \
-  ..\Core\Inc\spi.h ..\Core\Inc\main.h
+  ..\Core\Inc\spi.h ..\Core\Inc\main.h ..\Tasks\Inc\task_attitude.h \
+  ..\Devices\Inc\lsm6dsv.h \
+  ..\Devices\Device_Drivers\Inc\lsm6dsv16x_reg.h ..\Core\Inc\i2c.h \
+  ..\Algorithm\Inc\mahony_ahrs.h
