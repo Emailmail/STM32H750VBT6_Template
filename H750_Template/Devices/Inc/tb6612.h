@@ -40,11 +40,17 @@ typedef struct
     uint32_t ppr;             // Pulse Per Rotation
     uint32_t reduction_ratio; // Reduction Ratio
 
+    int16_t last_count;
+    int16_t last_last_count;
     uint32_t last_tick;
+    uint32_t last_delta_tick;
+    uint32_t last_last_delta_tick;
+
     float speed;
 } TB6612_Instance;
 
 TB6612_Instance *TB6612_Register(TB6612_InitTypedef *init);
+void TB6612_MotorStart(TB6612_Instance *instance);
 void TB6612_SetDuty(TB6612_Instance *instance, float duty);
 void TB6612_GetSpeed_Start(TB6612_Instance *instance);
 float TB6612_GetSpeed(TB6612_Instance *instance);

@@ -57,10 +57,13 @@
 "template\lsm6dsv.o"
 "template\tb6612.o"
 "template\st7789v2.o"
+"template\vofa.o"
 "template\task_attitude.o"
 "template\task_display.o"
 "template\task_light.o"
---strict --scatter "Template\Template.sct"
+"template\task_motor.o"
+"template\task_control.o"
+--library_type=microlib --strict --scatter "Template\Template.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "./Template/\Template.map" -o Template\Template.axf

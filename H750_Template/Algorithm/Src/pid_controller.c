@@ -9,8 +9,6 @@ PID_Controller *PID_Register(PID_Init_Config_s *init_config)
 {
     if(init_config == NULL)
         return NULL;
-    else if(init_config->dt <= 0)
-        return NULL;
     
     PID_Controller *instance = (PID_Controller *)pvPortMalloc(sizeof(PID_Controller));
     if(instance == NULL)
@@ -20,7 +18,7 @@ PID_Controller *PID_Register(PID_Init_Config_s *init_config)
     instance->Kd = init_config->Kd;
     instance->Ki = init_config->Ki;
     instance->Kp = init_config->Kp;
-    instance->dt = init_config->dt;
+    instance->last_tick = HAL_GetTick();
 
     return instance;
 }
@@ -38,6 +36,23 @@ uint8_t PID_SetLowPassFilter(PID_Controller *pid, float alpha)
 
     pid->USE_LOWPASS_FILTER = 1;
     LowPassFilter_Init(&pid->diff_lowpassfilter, alpha);
+
+    return 0;
+}
+
+/**
+ * @brief 设置变速积分
+ * @param pid 指向 PID_Controller 结构体的指针，包含PID控制器的所有参数和状态变量
+ * @param error_integral_threshold 误差积分阈值
+ * @retval 0 成功; 1 失败
+ */
+uint8_t PID_SetChangeIntegral(PID_Controller *pid, float error_integral_threshold)
+{
+    if(pid == NULL)
+        return 1;
+
+    pid->USE_CHANGE_INTEGRAL = 1;
+    pid->error_integral_threshold = error_integral_threshold;
 
     return 0;
 }
@@ -107,23 +122,27 @@ uint8_t PID_SetOutputLimit(PID_Controller *pid, float output_min, float output_m
  */
 float PID_Calculate(PID_Controller *pid, float error)
 {
+    uint32_t current_tick = HAL_GetTick();
+    uint32_t dt = current_tick - pid->last_tick;
+    pid->last_tick = current_tick;
+
     /* 更新输入 */
     pid->error = error;
     if(pid->USE_CHANGE_INTEGRAL)    // 如果使用变速积分(如果变速积分和积分分离同时设置,变速积分会执行而积分分离不会)
     {
         if(fabsf(pid->error) < pid->error_integral_threshold)
-            pid->integral_error += (1 - fabsf(pid->error / pid->error_integral_threshold)) * pid->error * pid->dt;
+            pid->integral_error += (1 - fabsf(pid->error / pid->error_integral_threshold)) * pid->error * dt;
     }
     else if(pid->USE_INTEGRAL_SEPARATE)  // 如果使用积分分离
     {
         if( pid->error < pid->input_integral_max && pid->error > pid->input_integral_min) 
-            pid->integral_error += pid->error * pid->dt;
+            pid->integral_error += pid->error * dt;
     }
     else
     {
-        pid->integral_error += pid->error * pid->dt;
+        pid->integral_error += pid->error * dt;
     }
-    pid->rate_error = (pid->error - pid->last_error) / pid->dt;
+    pid->rate_error = (pid->error - pid->last_error) / dt;
     if (pid->USE_INTEGRAL_LIMIT)    // 如果使用积分限幅
     {
         if (pid->integral_error > pid->integral_max)
@@ -177,6 +196,10 @@ float PID_Calculate(PID_Controller *pid, float error)
  */
 float PID_Increment(PID_Controller *pid, float error)
 {
+    uint32_t current_tick = HAL_GetTick();
+    uint32_t dt = current_tick - pid->last_tick;
+    pid->last_tick = current_tick;
+
     /* 更新输入 */
     pid->error = error;
     
@@ -185,7 +208,7 @@ float PID_Increment(PID_Controller *pid, float error)
     if(pid->USE_CHANGE_INTEGRAL)    // 变速积分实现
         if(fabsf(pid->error) < pid->error_integral_threshold)
         {
-            pid->i_out = pid->Ki * pid->error * pid->dt * (1 - fabsf(pid->error / pid->error_integral_threshold));
+            pid->i_out = pid->Ki * pid->error * dt * (1 - fabsf(pid->error / pid->error_integral_threshold));
         }
         else
         {
@@ -193,13 +216,13 @@ float PID_Increment(PID_Controller *pid, float error)
         }
     else
     {
-        pid->i_out = pid->Ki * pid->error * pid->dt;
+        pid->i_out = pid->Ki * pid->error * dt;
     }
     if(pid->USE_LOWPASS_FILTER) // 低通滤波实现
         pid->d_out = pid->Kd * LowPassFilter_GetValue(  &pid->diff_lowpassfilter, 
-                                                        (pid->error - 2 * pid->last_error + pid->last_last_error) / pid->dt);
+                                                        (pid->error - 2 * pid->last_error + pid->last_last_error) / dt);
     else
-        pid->d_out = pid->Kd * (pid->error - 2 * pid->last_error + pid->last_last_error) / pid->dt;
+        pid->d_out = pid->Kd * (pid->error - 2 * pid->last_error + pid->last_last_error) / dt;
     pid->output += pid->p_out + pid->i_out + pid->d_out;
     if(pid->USE_OUTPUT_LIMIT)   // 输出限幅实现
     {

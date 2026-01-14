@@ -159,15 +159,15 @@ void MahonyAHRS_Update(MahonyAHRS_Instance *instance, float gx, float gy, float 
 /**
  * @brief MahonyAHRS获取角度
  * @param instance 实例
- * @param pitch 俯仰角
  * @param roll 横滚角
+ * @param pitch 俯仰角
  * @param yaw 偏航角
  */
 void MahonyAHRS_GetAngles(MahonyAHRS_Instance *instance, float *pitch, float *roll, float *yaw)
 {
-    *roll = atan2f(instance->q0 * instance->q1 + instance->q2 * instance->q3, 0.5f - instance->q1 * instance->q1 - instance->q2 * instance->q2);
-    instance->roll = *roll *= RAD_TO_DEG;
-    instance->pitch = *pitch = RAD_TO_DEG * asinf(-2.0f * (instance->q1 * instance->q3 - instance->q0 * instance->q2));
+    *pitch = atan2f(instance->q0 * instance->q1 + instance->q2 * instance->q3, 0.5f - instance->q1 * instance->q1 - instance->q2 * instance->q2);
+    instance->pitch = *pitch *= RAD_TO_DEG;
+    instance->roll = *roll = RAD_TO_DEG * asinf(-2.0f * (instance->q1 * instance->q3 - instance->q0 * instance->q2));
     *yaw = atan2f(instance->q1 * instance->q2 + instance->q0 * instance->q3, 0.5f - instance->q2 * instance->q2 - instance->q3 * instance->q3);
     instance->yaw = *yaw *= RAD_TO_DEG;
 }

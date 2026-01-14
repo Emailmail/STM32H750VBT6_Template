@@ -26,12 +26,12 @@ void StartDisplayTask(void *argument)
 
     for (;;)
     {
-        sprintf((char *)Disp_Line, "Pitch: %8.2f ", pitch);
-        ST7789V2_ShowString(st7789v2, 10, 20, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
-        sprintf((char *)Disp_Line, " Roll: %8.2f ", roll);
-        ST7789V2_ShowString(st7789v2, 10, 40, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
-        sprintf((char *)Disp_Line, "  Yaw: %8.2f ", yaw);
-        ST7789V2_ShowString(st7789v2, 10, 60, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
+        // sprintf((char *)Disp_Line, "Pitch: %8.2f ", pitch);
+        // ST7789V2_ShowString(st7789v2, 10, 20, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
+        // sprintf((char *)Disp_Line, " Roll: %8.2f ", roll);
+        // ST7789V2_ShowString(st7789v2, 10, 40, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
+        // sprintf((char *)Disp_Line, "  Yaw: %8.2f ", yaw);
+        // ST7789V2_ShowString(st7789v2, 10, 60, (uint8_t *)Disp_Line, RED, WHITE, 16, 0);
 
         // ST7789V2_ShowString(st7789v2, 10, 20, (uint8_t *)"Pitch:", RED, WHITE, 16, 0);
         // ST7789V2_ShowFloatNum1(st7789v2, 80, 20, pitch, 6, RED, WHITE, 16);

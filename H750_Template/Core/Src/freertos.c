@@ -26,6 +26,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bsp_pwm.h"
+#include "stdio.h"
+#include "task_motor.h"
+#include "task_attitude.h"
+#include "task_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,8 +55,8 @@
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 1024 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for LightTask */
 osThreadId_t LightTaskHandle;
@@ -65,15 +69,43 @@ const osThreadAttr_t LightTask_attributes = {
 osThreadId_t AttitudeTaskHandle;
 const osThreadAttr_t AttitudeTask_attributes = {
   .name = "AttitudeTask",
-  .stack_size = 1024 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityHigh6,
 };
 /* Definitions for DisplayTask */
 osThreadId_t DisplayTaskHandle;
 const osThreadAttr_t DisplayTask_attributes = {
   .name = "DisplayTask",
-  .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for MotorTask */
+osThreadId_t MotorTaskHandle;
+const osThreadAttr_t MotorTask_attributes = {
+  .name = "MotorTask",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityHigh4,
+};
+/* Definitions for SpeedControlTas */
+osThreadId_t SpeedControlTasHandle;
+const osThreadAttr_t SpeedControlTas_attributes = {
+  .name = "SpeedControlTas",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityHigh5,
+};
+/* Definitions for AngleControlTas */
+osThreadId_t AngleControlTasHandle;
+const osThreadAttr_t AngleControlTas_attributes = {
+  .name = "AngleControlTas",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityHigh7,
+};
+/* Definitions for AngVelControlTa */
+osThreadId_t AngVelControlTaHandle;
+const osThreadAttr_t AngVelControlTa_attributes = {
+  .name = "AngVelControlTa",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityRealtime,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -85,6 +117,10 @@ void StartDefaultTask(void *argument);
 void StartLightTask(void *argument);
 void StartAttitudeTask(void *argument);
 void StartDisplayTask(void *argument);
+void StartMotorTask(void *argument);
+void StartSpeedControlTask(void *argument);
+void StartAngleControlTask(void *argument);
+void StartAngVelControlTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -127,6 +163,18 @@ void MX_FREERTOS_Init(void) {
   /* creation of DisplayTask */
   DisplayTaskHandle = osThreadNew(StartDisplayTask, NULL, &DisplayTask_attributes);
 
+  /* creation of MotorTask */
+  MotorTaskHandle = osThreadNew(StartMotorTask, NULL, &MotorTask_attributes);
+
+  /* creation of SpeedControlTas */
+  SpeedControlTasHandle = osThreadNew(StartSpeedControlTask, NULL, &SpeedControlTas_attributes);
+
+  /* creation of AngleControlTas */
+  AngleControlTasHandle = osThreadNew(StartAngleControlTask, NULL, &AngleControlTas_attributes);
+
+  /* creation of AngVelControlTa */
+  AngVelControlTaHandle = osThreadNew(StartAngVelControlTask, NULL, &AngVelControlTa_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -151,7 +199,8 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    printf("%.4f,%.4f,%.4f,%.4f,%.4f\r\n", speed_pid->p_out, speed_pid->i_out, speed_pid->d_out, speed, speed_pid->output);
+    osDelay(10);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -208,6 +257,78 @@ __weak void StartDisplayTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END StartDisplayTask */
+}
+
+/* USER CODE BEGIN Header_StartMotorTask */
+/**
+* @brief Function implementing the MotorTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartMotorTask */
+__weak void StartMotorTask(void *argument)
+{
+  /* USER CODE BEGIN StartMotorTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartMotorTask */
+}
+
+/* USER CODE BEGIN Header_StartSpeedControlTask */
+/**
+* @brief Function implementing the SpeedControlTas thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartSpeedControlTask */
+__weak void StartSpeedControlTask(void *argument)
+{
+  /* USER CODE BEGIN StartSpeedControlTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartSpeedControlTask */
+}
+
+/* USER CODE BEGIN Header_StartAngleControlTask */
+/**
+* @brief Function implementing the AngleControlTas thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartAngleControlTask */
+__weak void StartAngleControlTask(void *argument)
+{
+  /* USER CODE BEGIN StartAngleControlTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartAngleControlTask */
+}
+
+/* USER CODE BEGIN Header_StartAngVelControlTask */
+/**
+* @brief Function implementing the AngVelControlTa thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartAngVelControlTask */
+__weak void StartAngVelControlTask(void *argument)
+{
+  /* USER CODE BEGIN StartAngVelControlTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartAngVelControlTask */
 }
 
 /* Private application code --------------------------------------------------*/

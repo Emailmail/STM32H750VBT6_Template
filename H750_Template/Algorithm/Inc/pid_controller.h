@@ -1,6 +1,7 @@
 #ifndef _PID_H_
 #define _PID_H_
 #include "FreeRTOS.h"
+#include "stm32h7xx_hal.h"
 #include "lowpass_filter.h"
 #include "math.h"
 #include "stdint.h"
@@ -13,7 +14,9 @@ typedef struct
     float Kp;
     float Ki;
     float Kd;
-    float dt;
+
+    /* 时间戳 */
+    uint32_t last_tick;
 
     /* 微分项滤波设置 */
     bool USE_LOWPASS_FILTER;
@@ -57,12 +60,12 @@ typedef struct
     float Kp;
     float Ki;
     float Kd;
-    float dt;
 } PID_Init_Config_s;
 
 
 PID_Controller *PID_Register(PID_Init_Config_s *init_config);
 uint8_t PID_SetLowPassFilter(PID_Controller *pid, float alpha);
+uint8_t PID_SetChangeIntegral(PID_Controller *pid, float error_integral_threshold);
 uint8_t PID_SetIntegralSeperate(PID_Controller *pid, float integral_min, float integral_max);
 uint8_t PID_SetIntegralLimit(PID_Controller *pid, float integral_min, float integral_max);
 uint8_t PID_SetOutputLimit(PID_Controller *pid, float output_min, float output_max);

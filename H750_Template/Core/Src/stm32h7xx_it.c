@@ -94,6 +94,7 @@ void HardFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+		uint32_t cfsr = SCB->CFSR;
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }

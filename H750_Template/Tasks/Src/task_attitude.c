@@ -4,15 +4,10 @@ LSM6DSV_Instance *lsm6dsv;
 MahonyAHRS_Instance *mahony_ahrs;
 float pitch, roll, yaw;
 
-#define GYROX_OFFSET 0.0065f
-#define GYROY_OFFSET -0.0028f
-#define GYROZ_OFFSET 0.0070f
-
 void StartAttitudeTask(void *argument)
 {
     static TickType_t xLastWakeTime = 0;
     const TickType_t xPeriod = pdMS_TO_TICKS(5);
-    xLastWakeTime = xTaskGetTickCount();
 
     /* Register and Init LSM6DSV */
     LSM6DSV_InitTypedef init = 
@@ -30,14 +25,15 @@ void StartAttitudeTask(void *argument)
     /* Register and Init MahonyAHRS */
     MahonyAHRS_Init_Config_s mahony_init = 
     {
-        .Kp = 0.5f,
-        .Ki = 0.005f,
+        .Kp = 5.0f,
+        .Ki = 0.05f,
         .SamplePeriod = 0.005f
     };
     mahony_ahrs = MahonyAHRS_Register(&mahony_init);
     LSM6DSV_ReadData(lsm6dsv);
     MahonyAHRS_Init(mahony_ahrs, lsm6dsv->accel[0], lsm6dsv->accel[1], lsm6dsv->accel[2]);
 
+    xLastWakeTime = xTaskGetTickCount();
     for (;;)
     {
         /* Read IMU Data and Calculate Attitude (Pitch, Roll, Yaw) */

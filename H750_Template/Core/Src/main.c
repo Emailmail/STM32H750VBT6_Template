@@ -28,9 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "led.h"
-#include "key.h"
-#include "bsp_uart.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,19 +43,26 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+int fputc(int ch, FILE *f)
+ 
+{
+ 
+  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xffff);
+ 
+  return ch;
+ 
+}
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-UART_Instance *uart1;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
-static void MPU_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 void UART1_UserCallback(void *device_instance, uint16_t size);
@@ -79,8 +84,13 @@ int main(void)
 
   /* USER CODE END 1 */
 
-  /* MPU Configuration--------------------------------------------------------*/
-  MPU_Config();
+  /* Enable the CPU Cache */
+
+  /* Enable I-Cache---------------------------------------------------------*/
+  SCB_EnableICache();
+
+  /* Enable D-Cache---------------------------------------------------------*/
+  SCB_EnableDCache();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -113,18 +123,7 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  /* -------------------------------- 自定义代码开始 -------------------------------- */
-  /* ---------------- 注册设备 ---------------- */
-  /* 配置串口参数并注册串口实例 */
-  UART_Init_Config_s uart1_init = 
-  {
-    .recv_buff_size = 128,                // 串口接收缓冲区大小
-    .usart_handle = &huart1,              // 串口1
-    .module_callback = NULL, // 回调函数
-  };
-  uart1 = UART_Register(&uart1_init);
-  uart1->device_instance = (void *)uart1;
-  
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -140,9 +139,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    UART_Send(uart1, (uint8_t*)"UART Connecting.\r\n", strlen("UART Connecting.\r\n"), UART_TRANSFER_BLOCKING);
-    HAL_Delay(1000);
-    /*-------------------------------- 自定义代码结束 --------------------------------*/
+    HAL_Delay(50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -231,35 +228,6 @@ void PeriphCommonClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
- /* MPU Configuration */
-
-void MPU_Config(void)
-{
-  MPU_Region_InitTypeDef MPU_InitStruct = {0};
-
-  /* Disables the MPU */
-  HAL_MPU_Disable();
-
-  /** Initializes and configures the Region and the memory to be protected
-  */
-  MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-  MPU_InitStruct.Number = MPU_REGION_NUMBER0;
-  MPU_InitStruct.BaseAddress = 0x0;
-  MPU_InitStruct.Size = MPU_REGION_SIZE_4GB;
-  MPU_InitStruct.SubRegionDisable = 0x87;
-  MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
-  MPU_InitStruct.AccessPermission = MPU_REGION_NO_ACCESS;
-  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
-  MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
-
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-  /* Enables the MPU */
-  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-
-}
 
 /**
   * @brief  Period elapsed callback in non blocking mode

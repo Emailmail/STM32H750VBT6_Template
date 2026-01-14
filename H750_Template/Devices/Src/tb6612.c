@@ -56,12 +56,27 @@ void TB6612_GetSpeed_Start(TB6612_Instance *instance)
 
 float TB6612_GetSpeed(TB6612_Instance *instance)
 {
-    uint32_t count = __HAL_TIM_GET_COUNTER(instance->hencoder);
+    int16_t count = __HAL_TIM_GET_COUNTER(instance->hencoder);
     uint32_t current_tick = HAL_GetTick();
     uint32_t delta_tick = current_tick - instance->last_tick;
 
-    instance->speed = (float)count / delta_tick / instance->ppr / instance->reduction_ratio * 1000.0f;
+    /* Sample 3 times to reduce noise */
+    instance->speed = (float)(count + instance->last_count + instance->last_last_count) 
+                    / (delta_tick + instance->last_delta_tick + instance->last_last_delta_tick)
+                    / instance->ppr 
+                    / instance->reduction_ratio 
+                    * 1000.0f;
+
+    instance->last_last_count = instance->last_count;
+    instance->last_count = count;
+    instance->last_last_delta_tick = instance->last_delta_tick;
+    instance->last_delta_tick = delta_tick;
     instance->last_tick = current_tick;
     __HAL_TIM_SET_COUNTER(instance->hencoder, 0);
     return instance->speed;
+}
+
+void TB6612_MotorStart(TB6612_Instance *instance)
+{
+    PWM_Start(instance->hpwm);
 }
