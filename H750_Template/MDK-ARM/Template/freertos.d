@@ -40,9 +40,10 @@ template/freertos.o: ..\Core\Src\freertos.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os2.h \
-  ..\BSP\Inc\bsp_pwm.h ..\Core\Inc\tim.h ..\Tasks\Inc\task_motor.h \
-  ..\Devices\Inc\tb6612.h ..\Tasks\Inc\task_attitude.h \
+  ..\BSP\Inc\bsp_uart.h ..\Core\Inc\usart.h ..\Tasks\Inc\task_attitude.h \
   ..\Devices\Inc\lsm6dsv.h \
   ..\Devices\Device_Drivers\Inc\lsm6dsv16x_reg.h ..\Core\Inc\i2c.h \
-  ..\Algorithm\Inc\mahony_ahrs.h ..\Tasks\Inc\task_control.h \
-  ..\Algorithm\Inc\pid_controller.h ..\Algorithm\Inc\lowpass_filter.h
+  ..\Algorithm\Inc\mahony_ahrs.h ..\Tasks\Inc\task_motor.h \
+  ..\Devices\Inc\tb6612.h ..\BSP\Inc\bsp_pwm.h ..\Core\Inc\tim.h \
+  ..\Tasks\Inc\task_control.h ..\Algorithm\Inc\pid_controller.h \
+  ..\Algorithm\Inc\lowpass_filter.h

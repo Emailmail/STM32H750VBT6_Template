@@ -3,16 +3,13 @@
 
 LED_Instance *led0;
 LED_Instance *led1;
+uint8_t display_flag = 0;
 
-PWM_Instance *pwm1;
-PWM_Instance *pwm2;
-
+/**
+ * @brief LED任务(同时还有按键检测)
+ */
 void StartLightTask(void *argument)
 {
-    static TickType_t xLastWakeTime = 0;
-    const TickType_t xPeriod = 100;
-    xLastWakeTime = xTaskGetTickCount();
-
     LED_InitTypedef led0_init =
         {
             .port = GPIOE,
@@ -28,49 +25,27 @@ void StartLightTask(void *argument)
     led0 = LED_Register(&led0_init);
     led1 = LED_Register(&led1_init);
 
-    PWM_Init_Config_s pwm1_config = {
-        .channel = TIM_CHANNEL_1,
-        .dutyratio = 0.5,
-        .htim = &htim15,
-        .period = 0.001,
-    };
-    pwm1 = PWM_Register(&pwm1_config);
-        PWM_Init_Config_s pwm2_config = {
-        .channel = TIM_CHANNEL_2,
-        .dutyratio = 0.5,
-        .htim = &htim15,
-        .period = 0.001,
-    };
-    pwm2 = PWM_Register(&pwm2_config);
-
-    uint8_t flag = 0;
     for (;;)
     {
-        if (flag)
+        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15) == GPIO_PIN_SET) // KEY0按下
         {
-            // LED_On(led0);
-            // LED_Off(led1);
-            // flag = 0;
-            PWM_SetDutyRatio(pwm1, pwm1->dutyratio + 0.1);
-            PWM_SetDutyRatio(pwm2, pwm2->dutyratio - 0.1);
-            if(pwm1->dutyratio > 0.9)
+            if(display_flag == 0)
             {
-                flag = 0;
+                display_flag = 1;
+                LED_On(led0);
             }
+            else
+            {
+                display_flag = 0;
+                LED_Off(led0);
+            }
+            vTaskDelay(pdMS_TO_TICKS(500));
         }
-        else
+        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) // KEY1按下
         {
-            // LED_Off(led0);
-            // LED_On(led1);
-            // flag = 1;
-            PWM_SetDutyRatio(pwm1, pwm1->dutyratio - 0.1);
-            PWM_SetDutyRatio(pwm2, pwm2->dutyratio + 0.1);
-            if(pwm1->dutyratio < 0.1)
-            {
-                flag = 1;
-            }
+            
+            vTaskDelay(pdMS_TO_TICKS(500));
         }
-
-        vTaskDelayUntil(&xLastWakeTime, xPeriod);
+        vTaskDelay(pdMS_TO_TICKS(20));
     }
 }

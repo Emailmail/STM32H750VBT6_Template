@@ -25,10 +25,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "bsp_pwm.h"
+#include "bsp_uart.h"
+#include "usart.h"
 #include "stdio.h"
-#include "task_motor.h"
 #include "task_attitude.h"
+#include "task_motor.h"
 #include "task_control.h"
 /* USER CODE END Includes */
 
@@ -44,18 +45,20 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+void ibus_data_parse_callback(void *device_instance, uint16_t size);
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+UART_Instance *ibus_instance;
+int distance = 0;
+float intensity = 0.0f;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for LightTask */
@@ -76,7 +79,7 @@ const osThreadAttr_t AttitudeTask_attributes = {
 osThreadId_t DisplayTaskHandle;
 const osThreadAttr_t DisplayTask_attributes = {
   .name = "DisplayTask",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for MotorTask */
@@ -195,11 +198,18 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-
+  UART_Init_Config_s ibus_config=
+    {
+      .usart_handle = &huart2,
+      .recv_buff_size = 32,
+      .module_callback = ibus_data_parse_callback
+    };
+    ibus_instance = (UART_Instance *)UART_Register(&ibus_config);
+    ibus_instance->device_instance = ibus_instance;
+    
   /* Infinite loop */
   for(;;)
   {
-    printf("%.4f,%.4f,%.4f,%.4f,%.4f\r\n", speed_pid->p_out, speed_pid->i_out, speed_pid->d_out, speed, speed_pid->output);
     osDelay(10);
   }
   /* USER CODE END StartDefaultTask */
@@ -333,6 +343,16 @@ __weak void StartAngVelControlTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+void ibus_data_parse_callback(void *device_instance, uint16_t size)
+{
+  UART_Instance *instance = (UART_Instance *)device_instance;
+  sscanf((char *)instance->recv_buff, "%d\r\n", &distance);
+}
 
+int fputc(int ch, FILE *f)
+{
+  HAL_UART_Transmit_IT(&huart1, (uint8_t *)&ch, 1);
+  return ch;
+}
 /* USER CODE END Application */
 

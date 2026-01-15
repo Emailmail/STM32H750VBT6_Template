@@ -43,4 +43,6 @@ template/task_display.o: ..\Tasks\Src\task_display.c \
   ..\Core\Inc\spi.h ..\Core\Inc\main.h ..\Tasks\Inc\task_attitude.h \
   ..\Devices\Inc\lsm6dsv.h \
   ..\Devices\Device_Drivers\Inc\lsm6dsv16x_reg.h ..\Core\Inc\i2c.h \
-  ..\Algorithm\Inc\mahony_ahrs.h
+  ..\Algorithm\Inc\mahony_ahrs.h ..\Tasks\Inc\task_control.h \
+  ..\Algorithm\Inc\pid_controller.h ..\Algorithm\Inc\lowpass_filter.h \
+  ..\Tasks\Inc\task_light.h ..\Devices\Inc\led.h

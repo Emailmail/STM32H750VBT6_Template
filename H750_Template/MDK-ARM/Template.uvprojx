@@ -1905,11 +1905,6 @@
               <FileType>1</FileType>
               <FilePath>..\Devices\Src\st7789v2.c</FilePath>
             </File>
-            <File>
-              <FileName>vofa.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Devices\Src\vofa.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

@@ -3,4 +3,5 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "led.h"
+extern uint8_t display_flag;
 #endif

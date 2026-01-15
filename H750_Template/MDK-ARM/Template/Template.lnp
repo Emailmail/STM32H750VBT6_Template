@@ -57,7 +57,6 @@
 "template\lsm6dsv.o"
 "template\tb6612.o"
 "template\st7789v2.o"
-"template\vofa.o"
 "template\task_attitude.o"
 "template\task_display.o"
 "template\task_light.o"
