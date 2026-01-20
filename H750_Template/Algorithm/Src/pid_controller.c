@@ -24,6 +24,23 @@ PID_Controller *PID_Register(PID_Init_Config_s *init_config)
 }
 
 /**
+ * @brief 设置死区
+ * @param pid 指向 PID_Controller 结构体的指针，包含PID控制器的所有参数和状态变量。
+ * @param dead_zone 死区值
+ * @retval 0 成功; 1 失败
+ */
+uint8_t PID_SetDeadZone(PID_Controller *pid, float dead_zone)
+{
+    if(pid == NULL || dead_zone < 0.0f)
+        return 1;
+
+    pid->dead_zone = dead_zone;
+    pid->USE_DEAD_ZONE = 1;
+
+    return 0;
+}
+
+/**
  * @brief 设置微分项低通滤波
  * @param pid 指向 PID_Controller 结构体的指针，包含PID控制器的所有参数和状态变量。
  * @param alpha 滤波系数，范围在0到1之间。
@@ -142,6 +159,10 @@ float PID_Calculate(PID_Controller *pid, float error)
     {
         pid->integral_error += pid->error * dt;
     }
+    if(pid->USE_LOWPASS_FILTER) // 如果使用低通滤波
+    {
+        pid->error = LowPassFilter_GetValue(&pid->diff_lowpassfilter, pid->error);
+    }
     pid->rate_error = (pid->error - pid->last_error) / dt;
     if (pid->USE_INTEGRAL_LIMIT)    // 如果使用积分限幅
     {
@@ -158,14 +179,7 @@ float PID_Calculate(PID_Controller *pid, float error)
     /* 计算P,I,D的分别输出 */
     pid->p_out = pid->Kp * pid->error;
     pid->i_out = pid->Ki * pid->integral_error;
-    if (pid->USE_LOWPASS_FILTER)    // 如果使用低通滤波
-    {
-        pid->d_out = pid->Kd * LowPassFilter_GetValue(&pid->diff_lowpassfilter, pid->rate_error);
-    }
-    else
-    {
-        pid->d_out = pid->Kd * pid->rate_error;
-    }
+    pid->d_out = pid->Kd * pid->rate_error;
 
     /* 计算总输出 */
     pid->output = pid->p_out + pid->i_out + pid->d_out;
@@ -201,7 +215,17 @@ float PID_Increment(PID_Controller *pid, float error)
     pid->last_tick = current_tick;
 
     /* 更新输入 */
-    pid->error = error;
+    if(pid->USE_DEAD_ZONE) // 死区实现
+    {
+        if(fabsf(error) < pid->dead_zone)
+            error = 0.0f;
+        else
+            pid->error = error;
+    }
+    else
+    {
+        pid->error = error;
+    }
     
     /* 计算输出 */
     pid->p_out = pid->Kp * (pid->error - pid->last_error);

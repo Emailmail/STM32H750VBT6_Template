@@ -4,4 +4,5 @@
 #include "task.h"
 #include "led.h"
 extern uint8_t display_flag;
+extern uint8_t control_flag;
 #endif

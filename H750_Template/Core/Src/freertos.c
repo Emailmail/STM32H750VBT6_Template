@@ -25,12 +25,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "bsp_uart.h"
-#include "usart.h"
+#include "task_control.h"
 #include "stdio.h"
+#include "usart.h"
 #include "task_attitude.h"
 #include "task_motor.h"
-#include "task_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,14 +44,12 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-void ibus_data_parse_callback(void *device_instance, uint16_t size);
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-UART_Instance *ibus_instance;
-int distance = 0;
-float intensity = 0.0f;
+
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -110,6 +107,13 @@ const osThreadAttr_t AngVelControlTa_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityRealtime,
 };
+/* Definitions for RemoteTask */
+osThreadId_t RemoteTaskHandle;
+const osThreadAttr_t RemoteTask_attributes = {
+  .name = "RemoteTask",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -124,6 +128,7 @@ void StartMotorTask(void *argument);
 void StartSpeedControlTask(void *argument);
 void StartAngleControlTask(void *argument);
 void StartAngVelControlTask(void *argument);
+void StartRemoteTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -178,6 +183,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of AngVelControlTa */
   AngVelControlTaHandle = osThreadNew(StartAngVelControlTask, NULL, &AngVelControlTa_attributes);
 
+  /* creation of RemoteTask */
+  RemoteTaskHandle = osThreadNew(StartRemoteTask, NULL, &RemoteTask_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -198,18 +206,14 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  UART_Init_Config_s ibus_config=
-    {
-      .usart_handle = &huart2,
-      .recv_buff_size = 32,
-      .module_callback = ibus_data_parse_callback
-    };
-    ibus_instance = (UART_Instance *)UART_Register(&ibus_config);
-    ibus_instance->device_instance = ibus_instance;
-    
+  
   /* Infinite loop */
   for(;;)
   {
+    printf("%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\r\n", turn_pid->p_out, turn_pid->i_out, turn_pid->d_out, turn_pid->output, target_speed, deltaspeed);
+    // printf("%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\r\n", speed_pid->p_out, speed_pid->i_out, speed_pid->d_out, speed_pid->output, speed, target_speed);
+    // printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\r\n", angle_pid->p_out, angle_pid->i_out, angle_pid->d_out, angle_pid->output, pitch, target_speed);
+    // printf("%.2f,%.2f,%.2f,%.2f,%.2f\r\n", angvel_pid->p_out, angvel_pid->i_out, angvel_pid->d_out, angvel_pid->output, lsm6dsv->gyro[0]);
     osDelay(10);
   }
   /* USER CODE END StartDefaultTask */
@@ -341,18 +345,32 @@ __weak void StartAngVelControlTask(void *argument)
   /* USER CODE END StartAngVelControlTask */
 }
 
+/* USER CODE BEGIN Header_StartRemoteTask */
+/**
+* @brief Function implementing the RemoteTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartRemoteTask */
+__weak void StartRemoteTask(void *argument)
+{
+  /* USER CODE BEGIN StartRemoteTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartRemoteTask */
+}
+
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-void ibus_data_parse_callback(void *device_instance, uint16_t size)
-{
-  UART_Instance *instance = (UART_Instance *)device_instance;
-  sscanf((char *)instance->recv_buff, "%d\r\n", &distance);
-}
 
 int fputc(int ch, FILE *f)
 {
-  HAL_UART_Transmit_IT(&huart1, (uint8_t *)&ch, 1);
+  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xffff);
   return ch;
 }
+
 /* USER CODE END Application */
 

@@ -7,4 +7,8 @@
 extern TB6612_Instance *tb6612_motor1;
 extern TB6612_Instance *tb6612_motor2;
 extern float duty;
+extern float speed;
+extern float deltaspeed;
+extern float delta_dutyleft;
+extern float delta_dutyright;
 #endif

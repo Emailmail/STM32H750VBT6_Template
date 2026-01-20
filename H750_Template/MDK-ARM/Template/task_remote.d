@@ -1,5 +1,5 @@
-template/task_control.o: ..\Tasks\Src\task_control.c \
-  ..\Tasks\Inc\task_control.h ..\Algorithm\Inc\pid_controller.h \
+template/task_remote.o: ..\Tasks\Src\task_remote.c \
+  ..\Tasks\Inc\task_remote.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
   ..\Core\Inc\FreeRTOSConfig.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\projdefs.h \
@@ -7,14 +7,17 @@ template/task_control.o: ..\Tasks\Src\task_control.c \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\deprecated_definitions.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F\portmacro.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\mpu_wrappers.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\task.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\list.h \
+  ..\Devices\Inc\x6b.h ..\BSP\Inc\bsp_uart.h \
+  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h750xx.h \
+  ..\Drivers\CMSIS\Include\core_cm7.h \
+  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
   ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h7xx.h \
-  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h750xx.h \
-  ..\Drivers\CMSIS\Include\core_cm7.h \
-  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h \
@@ -37,13 +40,4 @@ template/task_control.o: ..\Tasks\Src\task_control.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\Algorithm\Inc\lowpass_filter.h ..\Tasks\Inc\task_attitude.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\task.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\list.h \
-  ..\Devices\Inc\lsm6dsv.h \
-  ..\Devices\Device_Drivers\Inc\lsm6dsv16x_reg.h ..\Core\Inc\i2c.h \
-  ..\Core\Inc\main.h ..\Algorithm\Inc\mahony_ahrs.h \
-  ..\Tasks\Inc\task_motor.h ..\Devices\Inc\tb6612.h ..\BSP\Inc\bsp_pwm.h \
-  ..\Core\Inc\tim.h ..\Tasks\Inc\task_remote.h ..\Devices\Inc\x6b.h \
-  ..\BSP\Inc\bsp_uart.h ..\Core\Inc\usart.h ..\Tasks\Inc\task_light.h \
-  ..\Devices\Inc\led.h
+  ..\Core\Inc\usart.h ..\Core\Inc\main.h

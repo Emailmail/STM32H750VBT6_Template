@@ -1,5 +1,6 @@
 #include "bsp_uart.h"
 
+
 /* usart服务实例,所有注册了usart的模块信息会被保存在这里 */
 static uint8_t idx;
 static UART_Instance *usart_instance[DEVICE_UART_CNT] = {NULL};
@@ -21,7 +22,11 @@ UART_Instance *UART_Register(UART_Init_Config_s *init_config)
             return NULL;
 
     /* 分配内存,传递指针 */
+#if USE_FREERTOS
+    UART_Instance *instance = (UART_Instance *)pvPortMalloc(sizeof(UART_Instance));
+#else
     UART_Instance *instance = (UART_Instance *)malloc(sizeof(UART_Instance));
+#endif
     if(instance == NULL)
         return NULL;
     memset(instance, 0, sizeof(UART_Instance));
@@ -49,8 +54,12 @@ UART_Instance *UART_Register(UART_Init_Config_s *init_config)
 HAL_StatusTypeDef UART_Service_Init(UART_Instance *uart_instance)
 {
     HAL_StatusTypeDef ret;
+#if (UART_USE_DMA) 
     ret = HAL_UARTEx_ReceiveToIdle_DMA(uart_instance->usart_handle, uart_instance->recv_buff, uart_instance->recv_buff_size);
     __HAL_DMA_DISABLE_IT(uart_instance->usart_handle->hdmarx, DMA_IT_HT);
+#else
+    ret = HAL_UARTEx_ReceiveToIdle_IT(uart_instance->usart_handle, uart_instance->recv_buff, uart_instance->recv_buff_size);
+#endif
     return ret;
 }
 
@@ -111,12 +120,15 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
             if (usart_instance[i]->module_callback != NULL)
             {
                 usart_instance[i]->module_callback(usart_instance[i]->device_instance, Size);
-                memset(usart_instance[i]->recv_buff, 0, Size); // 接收结束后清空buffer,对于变长数据是必要的
             }
 
             /* 再次启用接收 */
+#if (UART_USE_DMA)
             HAL_UARTEx_ReceiveToIdle_DMA(usart_instance[i]->usart_handle, usart_instance[i]->recv_buff, usart_instance[i]->recv_buff_size);
             __HAL_DMA_DISABLE_IT(usart_instance[i]->usart_handle->hdmarx, DMA_IT_HT);
+#else
+            HAL_UARTEx_ReceiveToIdle_IT(usart_instance[i]->usart_handle, usart_instance[i]->recv_buff, usart_instance[i]->recv_buff_size);
+#endif
             return;
         }
     }
@@ -133,9 +145,13 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     {
         if (huart == usart_instance[i]->usart_handle)
         {
+#if (UART_USE_DMA)
             /* 再次启用接收 */
             HAL_UARTEx_ReceiveToIdle_DMA(usart_instance[i]->usart_handle, usart_instance[i]->recv_buff, usart_instance[i]->recv_buff_size);
             __HAL_DMA_DISABLE_IT(usart_instance[i]->usart_handle->hdmarx, DMA_IT_HT);
+#else
+            HAL_UARTEx_ReceiveToIdle_IT(usart_instance[i]->usart_handle, usart_instance[i]->recv_buff, usart_instance[i]->recv_buff_size);
+#endif
             return;
         }
     }

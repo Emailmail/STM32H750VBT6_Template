@@ -22,6 +22,10 @@ typedef struct
     bool USE_LOWPASS_FILTER;
     LowPass_Filter diff_lowpassfilter;
 
+    /* 死区设置 */
+    bool USE_DEAD_ZONE;
+    float dead_zone;
+
     /* 积分分离设置 */
     bool USE_INTEGRAL_SEPARATE;
     float input_integral_max;
@@ -64,6 +68,7 @@ typedef struct
 
 
 PID_Controller *PID_Register(PID_Init_Config_s *init_config);
+uint8_t PID_SetDeadZone(PID_Controller *pid, float dead_zone);
 uint8_t PID_SetLowPassFilter(PID_Controller *pid, float alpha);
 uint8_t PID_SetChangeIntegral(PID_Controller *pid, float error_integral_threshold);
 uint8_t PID_SetIntegralSeperate(PID_Controller *pid, float integral_min, float integral_max);
